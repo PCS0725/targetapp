@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private IVersionCompareUtil versionCompareUtil;
     private MandatoryDialog mandatoryDialog;
     private OptionalDialog optionalDialog;
+    private String filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,22 +43,23 @@ public class MainActivity extends AppCompatActivity {
         context = getApplicationContext();
 
         textView.setText("Current version is : " + Integer.toString(BuildConfig.VERSION_CODE));
+        filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                + File.separator + UpdateConfigData.APK_FILE_NAME;
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        context = getApplicationContext();
-
         try {
             SharedPreferences sharedPref = SharedPrefSingleton.getInstance(context);
             String latestVersion = sharedPref.getString(UpdateConfigData.VERSION_KEY,
                     String.valueOf(BuildConfig.VERSION_CODE));
             String isMandatory = sharedPref.getString(UpdateConfigData.MANDATORY_KEY, "false");
+            filePath = sharedPref.getString(UpdateConfigData.FILE_PATH, filePath);
             boolean isUpdateAvailable = versionCompareUtil.isUpdateAvailable(latestVersion);
             Log.i(TAG, "Is update available : " + isUpdateAvailable);
 
-            if(isUpdateAvailable && isMandatory.equals("true")){
+            if(true){
                 mandatoryDialog = new MandatoryDialog();
                 mandatoryDialog.setCancelable(false);
                 mandatoryDialog.show(getSupportFragmentManager(),"MandatoryDialog");
@@ -72,14 +74,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * This method initiates PackageInstaller activity to install update
+     * It is called from the dialog fragment
+     */
     public void startInstall(){
         try {
-            //read filePath from sharedPreferences, coded here for testing.
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    + File.separator + UpdateConfigData.APK_FILE_NAME;
-
-            File mfile = new File(path);
+            File mfile = new File(filePath);
             Intent intent;
             Uri apkURI;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -99,5 +100,4 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "err installing update : " + e.getMessage());
         }
     }
-
 }
