@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".services.MyBroadcastReceiver"  android:exported="true">
+        <receiver android:name=".util.MyBroadcastReceiver"  android:exported="true">
             <intent-filter>
                 <action android:name="UPDATE_EVENT"/>
             </intent-filter>

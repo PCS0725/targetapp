@@ -1,4 +1,4 @@
-package autoupdate.targetapp2.services;
+package autoupdate.targetapp2.util;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
